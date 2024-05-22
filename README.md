@@ -1,6 +1,6 @@
 # Training Asccl on Shengteng server
 
-This has enabled the training of asccl on Shengteng NPU.
+This has enabled the training of asccl on Ascend NPU.
 
 ## Requirements
 
