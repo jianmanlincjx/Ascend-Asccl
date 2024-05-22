@@ -20,7 +20,7 @@ source env.sh
 The obtained MEAD dataset is first preprocessed with 'dataloader/align_face.py':
 
 ```bash
-python dataloader/align_face.py
+python ./dataloader/align_face.py
 ```
 
 ## Training
