@@ -16,7 +16,7 @@ from model.base_model import iresnet50, mlp, Normalize, TimeSeriesTransformer
 class Spatial_Coherent_Correlation_Learning(nn.Module):
     def __init__(self):
         super(Spatial_Coherent_Correlation_Learning, self).__init__()
-        self.cross_entropy_loss = torch.nn.CrossEntropyLoss().cuda()
+        self.cross_entropy_loss = torch.nn.CrossEntropyLoss(reduction='none')
         
         self.resnet50 = iresnet50().cuda()
         self.size = 224
@@ -56,7 +56,7 @@ class Spatial_Coherent_Correlation_Learning(nn.Module):
         return location.reshape(-1, 2).cuda(), neighborhood.reshape(-1, 2).cuda()
     
     ## PatchNCELoss code from: https://github.com/taesungp/contrastive-unpaired-translation 
-    def PatchNCELoss(self, f_q, f_k, weight_pos, tau=0.07):
+    def PatchNCELoss(self, f_q, f_k, weight_pos=None, tau=0.07):
         # batch size, channel size, and number of sample locations
         B, C, S = f_q.shape
         f_k = f_k.detach()
@@ -72,8 +72,10 @@ class Spatial_Coherent_Correlation_Learning(nn.Module):
         # return PatchNCE loss
         predictions = logits.flatten(0, 1)
         targets = torch.zeros(B * S, dtype=torch.long).to(f_q.device)
-        return torch.mean(self.cross_entropy_loss(predictions, targets) * weight_pos)
-        # return torch.mean(self.cross_entropy_loss(predictions, targets))
+        if weight_pos:
+            return torch.mean(self.cross_entropy_loss(predictions, targets) * weight_pos)
+        else:
+            return torch.mean(self.cross_entropy_loss(predictions, targets))
 
     def warp_landmarks2img(self, source_landmarks, target_landmarks, source_image, target_image):
         B = source_landmarks.shape[0]
