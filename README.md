@@ -31,5 +31,6 @@ To train the model, run './trainer/train_asccl.py' with the preprocessed dataset
 python ./trainer/train_asccl.py
 ```
 
+After approximately 50 epochs, you can obtain a checkpoint file. This checkpoint can be used to supervise the training of the SPFEM model.
 
 
